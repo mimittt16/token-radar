@@ -23,6 +23,36 @@
 // multiples are recomputed from whatever snapshot the program is given, so the radar stays
 // dynamic for snapshots it has never seen.
 
+/**
+ * Known limits of this model (read before trusting a rank).
+ *
+ * - A category's peer multiple is only as good as its live peers. Categories with one or two
+ *   live peers are shrunk toward the global median (weight 3), but a single outlier peer can
+ *   still move a category: Risk Curators, the multiple behind the top three rows, rests on
+ *   one live peer, so the top of the board is only as solid as that peer.
+ * - A category median is a blunt instrument: the median live-token protocol may look nothing
+ *   like the pre-token protocol it prices, so two rows in one category can deserve very
+ *   different multiples and still receive the same one.
+ * - The 1.50x clamp is a guardrail, not a measurement. Polymarket's only live peer implies a
+ *   multiple near 400x; the clamp holds it at 1.50x rather than letting one peer set the board.
+ * - Growth is a single 7-day window, so a short spike can lift a row that has no staying power,
+ *   and a protocol that just had a bad week can rank below what its size deserves.
+ * - Maturity rewards age up to three years; a young protocol with strong traction can rank
+ *   below an older, slower one, and an unknown listing date is scored as one year old.
+ * - Chain reach caps at 1.15x: being on many chains is a weak signal, not a promise of a launch,
+ *   and a single-chain protocol with deep liquidity can outrank a thin multi-chain one.
+ * - TVL is the model's only size input. It says nothing about revenue, users, or whether the
+ *   protocol's team has ever hinted at a token; a high-TVL protocol with no token plans still
+ *   ranks high, because the radar scores what a launch would be worth, not whether one comes.
+ * - The board ranks implied value, not launch probability. A high implied value does not mean
+ *   a token is coming, and a low one does not mean it is not.
+ * - The snapshot is frozen at the competition's fetch date. A protocol that launched, collapsed,
+ *   or changed shape after that date still appears here as it stood then.
+ * - Farm plans are generic per category, chain and age band: a starting point for research,
+ *   not financial advice, and never a guarantee of an airdrop.
+ * - Treat every rank as a hypothesis to check, not a verdict.
+ */
+
 /** The snapshot's protocol entry: exactly the ten fields the sealed input carries. */
 export interface SnapshotProtocol {
   slug: string;
